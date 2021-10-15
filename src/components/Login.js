@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useHistory } from 'react-router';
+import axiosWithAuth from '../utils/axiosWithAuth';
 const initialValues = {
     username: '',
     password: '',
@@ -19,7 +20,8 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         axios.post('http://localhost:5000/api/login', formValues)
-        .then((res) => {window.localStorage.setItem('token',res.data.payload);
+        .then((res) => {window.localStorage.setItem('token', res.data.token);
+        
         push('/view');
         setFormValues(initialValues);
     })
