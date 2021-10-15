@@ -16,18 +16,22 @@ const View = (props) => {
         .then(res=> setArticles(res.data))
         .catch(err=> console.log({ err }));
         
-    })
+    }, [])
 
     const handleDelete = (id) => {
         axiosWithAuth()
         .delete(`http://localhost:5000/api/articles/${id}`)
+        .then(res=> {setArticles(articles.filter(article => article.id !== id))})
+        .catch(err=> console.log({ err }))
+        
         
     }
 
     const handleEdit = (article) => {
         axiosWithAuth()
         .put(`http://localhost:5000/api/articles/${article.id}`, article)
-        .then(res=> {setArticles(res.data)
+        .then(res=> {
+        setArticles(res.data)
         setEditing(false)
     console.log(res.data)})
         .catch(err=> console.log({ err }))
