@@ -1,29 +1,46 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+import { useHistory } from 'react-router';
 const initialValues = {
     username: '',
     password: '',
-    errorMessage: '',
 }
+
+
 
 const Login = () => {
     const [formValues, setFormValues] = useState(initialValues)
-
+    const [errorMessage, setErrorMessage] = useState('')
+    const { push } = useHistory();
     const handleChanges= (e)=> {
         setFormValues({ ...formValues, [e.target.name]: e.target.value});
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios.post('http://localhost:5000/api/login', formValues)
+        .then((res) => {window.localStorage.setItem('token',res.data.payload);
+        push('/view');
+        setFormValues(initialValues);
+    })
+    .catch(err => {
+        setErrorMessage(err.response.data);
+        setFormValues(initialValues)
+    })
+
     }
     return (<ComponentContainer>
         <ModalContainer>
             <h1>Welcome to Blogger Pro</h1>
             <h2>Please enter your account information.</h2>
-            <FormGroup >
+            <FormGroup onSubmit={handleSubmit} >
 
                 <Label htmlFor="username">Username</Label>
                 <Input id="username" name='username' value={formValues.username} onChange={handleChanges} />
                 <Label htmlFor="password" >Password</Label>
                 <Input id="password" name='password' value={formValues.password} onChange={handleChanges} type='password' />
                 <Button id='submit'>Log In</Button>
-                <p id="error">{formValues.errorMessage}</p>
+                <p id="error">{errorMessage.error}</p>
             </FormGroup>
 
         </ModalContainer>
